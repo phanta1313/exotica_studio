@@ -43,7 +43,7 @@ ROOT_URLCONF = 'config.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / "templates"],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -117,14 +117,22 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 JAZZMIN_SETTINGS = {
     "site_title": "Exotica Studio Admin",
     "site_header": "Exotica Studio",
-    "site_brand": "Exotica",
-    "welcome_sign": "Добро пожаловать в админку Exotica Studio",
-    "show_sidebar": True,
-    "navigation_expanded": True,
-    "icons": {
-        "auth": "fas fa-users-cog",
-        "app_label": "fas fa-puzzle-piece",
-    },
+    "welcome_sign": "Добро пожаловать в панель управления",
+    "topmenu_links": [
+        {"name": "Главная", "url": "/", "permissions": ["auth.view_user"]},
+        {
+            "name": "🔥 Скачать логи",       
+            "url": "/download-logs/",
+            "new_window": False,
+        },
+        {
+            "name": "🔥 Скачать ID пользователей",       
+            "url": "/download-user-ids/",
+            "new_window": False,
+        },
+    ],
 }
+
+
 
 

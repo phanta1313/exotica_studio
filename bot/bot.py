@@ -12,7 +12,7 @@ from colorama import Style, Fore
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import os, sys, time, threading
-
+from bot_middleware import LoggingMiddleware
 
 
 MEDIA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "media"))       
@@ -20,6 +20,7 @@ DATA_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data.
 
 bot = Bot(token=getenv("BOT_TOKEN"))
 dp = Dispatcher()
+dp.update.middleware(LoggingMiddleware())
 
 ADMIN_GROUP_ID = getenv("ADMIN_GROUP_ID")
 
