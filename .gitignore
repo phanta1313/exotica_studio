@@ -1,0 +1,9 @@
+run.sh
+.env
+**/__pycache__
+/.venv
+initial_data.json
+**/migrations
+**.sqlite3
+.vscode
+**/static

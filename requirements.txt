@@ -1,0 +1,9 @@
+asyncio
+aiogram
+dotenv
+logging
+colorama
+django
+django-jazzmin
+gunicorn
+watchdog
