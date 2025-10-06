@@ -75,9 +75,13 @@ async def handler_{button["callback_data"]}(cq: CallbackQuery):
         elif m.lower().endswith((".mp4", ".mov", ".avi", ".mkv", ".webm")):
             media.append(InputMediaVideo(media=FSInputFile(MEDIA_DIR + "/" + m), width=720, height=1280))
 
-    if media:  
-        await bot.send_media_group(chat_id=chat_id, media=media)
-
+    if media:   
+        if len(media) > 10:
+            for i in range(len(media)):
+                await bot.send_media_group(chat_id=chat_id, media=[media[i]])
+        else:
+            await bot.send_media_group(chat_id=chat_id, media=media)
+    
     await cq.answer()
 '''
         )
@@ -88,8 +92,7 @@ async def handler_contact(callback_query: CallbackQuery):
         [InlineKeyboardButton(text="Связаться", callback_data=f"contact_admin")],
         [InlineKeyboardButton(text="Назад в меню", callback_data=f"start")]
     ])
-    await callback_query.message.answer(text='''Для связи с менеджером нажмите на кнопку "СВЯЗАТЬСЯ"\nЕсли нажали случайно, можете вернуться в Главное меню.''',
-                                         reply_markup=keyboard)
+    await callback_query.message.answer(text='''Для связи с менеджером нажмите на кнопку "СВЯЗАТЬСЯ"\nЕсли нажали случайно, можете вернуться в Главное меню.''', reply_markup=keyboard)
 
 
 @dp.callback_query(lambda c: c.data == "contact_admin")
