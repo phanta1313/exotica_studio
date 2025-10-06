@@ -1,10 +1,11 @@
-import csv
 import os
 from aiogram import BaseMiddleware
 from aiogram.types import Message
+from pathlib import Path
+import csv
 
 
-LOG_DIR = "../logs"
+LOG_DIR = Path(__file__).parent.parent / "logs"
 os.makedirs(LOG_DIR, exist_ok=True)
 
 
@@ -14,10 +15,11 @@ UNIQUE_USERS_CSV = os.path.join(LOG_DIR, "unique_users.csv")
 
 class LoggingMiddleware(BaseMiddleware):
     async def __call__(self, handler, event, data):
-        if isinstance(event, Message):
-            user_id = event.from_user.id
-            username = event.from_user.username or ""
-            text = event.text or ""
+        if event.message:
+            msg = event.message
+            user_id = msg.from_user.id
+            username = msg.from_user.username or ""
+            text = msg.text or ""
 
             file_exists = os.path.isfile(ALL_MESSAGES_CSV)
             with open(ALL_MESSAGES_CSV, "a", newline="", encoding="utf-8") as f:
