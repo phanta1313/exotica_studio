@@ -4,7 +4,7 @@ import subprocess
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
-MEDIA_URL = '../media/'
+MEDIA_URL = BASE_DIR / '../media/'
 DATA_JSON = BASE_DIR / '../data.json'
 
 

@@ -13,12 +13,14 @@ from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 import os, sys, time, threading
 from bot_middleware import LoggingMiddleware
+from aiogram.client.default import DefaultBotProperties
+from aiogram.enums import ParseMode
 
 
 MEDIA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "media"))       
 DATA_FILE = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "data.json"))
 
-bot = Bot(token=getenv("BOT_TOKEN"))
+bot = Bot(token=getenv("BOT_TOKEN"), default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 dp = Dispatcher()
 dp.update.middleware(LoggingMiddleware())
 
