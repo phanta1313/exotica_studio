@@ -15,6 +15,7 @@ import os, sys, time, threading
 from bot_middleware import LoggingMiddleware
 from aiogram.client.default import DefaultBotProperties
 from aiogram.enums import ParseMode
+from aiogram import F
 
 
 MEDIA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "media"))       
@@ -25,6 +26,8 @@ dp = Dispatcher()
 dp.update.middleware(LoggingMiddleware())
 
 ADMIN_GROUP_ID = getenv("ADMIN_GROUP_ID")
+ADMIN_IDS = getenv("ADMIN_IDS").split(",")
+
 
 with open(DATA_FILE, "r", encoding="utf-8") as f:
     DATA = json.load(f)
@@ -90,20 +93,61 @@ async def handler_{button["callback_data"]}(cq: CallbackQuery):
         )
 
 @dp.callback_query(lambda c: c.data == "contact")
-async def handler_contact(callback_query: CallbackQuery):
+async def handler_contact(cq: CallbackQuery):
     keyboard = InlineKeyboardMarkup(inline_keyboard=[
         [InlineKeyboardButton(text="Связаться", callback_data=f"contact_admin")],
         [InlineKeyboardButton(text="Назад в меню", callback_data=f"start")]
     ])
-    await callback_query.message.answer(text='''Для связи с менеджером нажмите на кнопку "СВЯЗАТЬСЯ"\nЕсли нажали случайно, можете вернуться в Главное меню.''', reply_markup=keyboard)
+    await cq.message.answer(text='''Для связи с менеджером нажмите на кнопку "СВЯЗАТЬСЯ"\nЕсли нажали случайно, можете вернуться в Главное меню.''', reply_markup=keyboard)
+
+
+message_links = {}
 
 
 @dp.callback_query(lambda c: c.data == "contact_admin")
-async def contact_admin(callback_query: CallbackQuery):
-    username = callback_query.message.chat.username
+async def contact_admin(cq: CallbackQuery):
+    username = cq.from_user.username or "Без username"
+    user_id = cq.from_user.id
 
-    await callback_query.message.answer("Благодаримм за ваш интерес к сотрудничеству! Ваша заявка была отправлена админу. C вами свяжутся в ближайшее время для обсуждения деталей.") 
-    await bot.send_message(ADMIN_GROUP_ID, text=f"Запрос на сотрудничество от: @{username}.")
+    await cq.message.answer(
+        "Благодарим за ваш интерес к сотрудничеству! "
+        "Ваша заявка была отправлена админу. "
+        "С вами свяжутся в ближайшее время для обсуждения деталей."
+    )
+
+    sent = await cq.bot.send_message(
+        ADMIN_GROUP_ID,
+        text=(
+            f"📩 Запрос на сотрудничество от @{username} (ID: {user_id}).\n\n"
+            f"Чтобы ответить — просто ответьте на это сообщение."
+        )
+    )
+
+    message_links[sent.message_id] = user_id
+
+    await cq.answer()
+
+
+@dp.message(F.reply_to_message)
+async def admin_reply_handler(message: Message):
+    """Если админ отвечает (reply) на сообщение бота — переслать пользователю."""
+    reply = message.reply_to_message
+
+    # Проверяем, есть ли связь между этим сообщением и пользователем
+    target_user_id = message_links.get(reply.message_id)
+
+    if target_user_id:
+        # Отправляем ответ пользователю
+        await message.bot.send_message(
+            target_user_id,
+            f"📨 Сообщение от администратора:\n\n{message.text}"
+        )
+
+        await message.reply("✅ Сообщение отправлено пользователю.")
+    else:
+        await message.reply("⚠️ Не удалось определить получателя. "
+                            "Ответьте на сообщение, отправленное ботом при заявке.")
+
 
 
 class ReloadOnChange(FileSystemEventHandler):
