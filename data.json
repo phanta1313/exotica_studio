@@ -214,14 +214,5 @@
         "on_callback": [
             "studio"
         ]
-    },
-    {
-        "button_name": "Новая кнопка",
-        "text": "текст новой кнопки",
-        "media": [],
-        "callback_data": "new_btn",
-        "on_callback": [
-            "start"
-        ]
     }
 ]

@@ -5,7 +5,7 @@ import subprocess
 BASE_DIR = Path(__file__).resolve().parent.parent
 MEDIA_ROOT = os.path.join(BASE_DIR, '../media')
 MEDIA_URL = '../media/'
-DATA_JSON = '../data.json'
+DATA_JSON = BASE_DIR / '../data.json'
 
 
 SECRET_KEY = 'django-insecure-o(+cji_k%g4xr4@pyvc_cejcb$ku@6z9w6uf=6_avw^3h3fcz3'

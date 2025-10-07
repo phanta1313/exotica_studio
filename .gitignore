@@ -8,3 +8,4 @@ initial_data.json
 .vscode
 **/static
 *.out
+**/logs
